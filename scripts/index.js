@@ -48,3 +48,7 @@ playerBtn.forEach((btn, i) => { //циклу передаил фукнцию, в
 radioPlayerInit();//вызызваемф укнцию
 videoPlayerInit();
 musicPlayerInit();
+
+//test.addEventListener('change', () => console.log(test.value));//после ввода строки, кликнув по полю будет проиходить собтие
+
+//test.addEventListener('input', () => console.log(test.value)); //при каждом вводе симлвоа будет происхоить событие
