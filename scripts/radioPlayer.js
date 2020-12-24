@@ -1,4 +1,4 @@
-export const  radioPlayerInit = () => { //  экспортируем функцию radioPlayerInit и здесь же ее опсиываем
+export const  radioPlayerInit = () => { //  экспортируем функцию radioPlayerInit и здесь же ее описываем
   
   const radioCoverImg = document.querySelector('.radio-cover__img');
   const radioHeaderBig = document.querySelector('.radio-header__big');//h1
@@ -13,16 +13,16 @@ export const  radioPlayerInit = () => { //  экспортируем функц�
   radioStop.disabled = true; //задизейблили кнопку radioStop, в баузере в  верстке появится это свойство
   
   const changeIconPlay = () => {
+    
     if(audio.paused){//если на паузе
-        radio.classList.remove('play');
+        radio.classList.remove('play');//кружок не крутиться
         radioStop.classList.remove('fa-stop');
-        radioStop.classList.add('fa-play');
-        
+        radioStop.classList.add('fa-play');  
     }
     else{
-      radio.classList.add('play');
-      radioStop.classList.add('fa-stop');
-      radioStop.classList.remove('fa-play');
+      radio.classList.add('play');//будет крутиться кружок большой
+      radioStop.classList.add('fa-stop');//у кнопки  менеятся иконка
+      radioStop.classList.remove('fa-play');//у кнопки менеятся иконка
     }
   };
 
@@ -36,7 +36,8 @@ export const  radioPlayerInit = () => { //  экспортируем функц�
 
 
   radioNavigation.addEventListener('change', (event) => { //на форму вешаем событие, при перключении радиостанций срабатывает событие
-    const target = event.target;
+    
+    const target = event.target; //хранит элемет на котроый нажали
     const parrent = target.closest('.radio-item');//(li). Ищет родителя по указанному классу,  у элемента target
     selectItem(parrent);
 

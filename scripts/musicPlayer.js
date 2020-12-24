@@ -1,124 +1,134 @@
-export const  musicPlayerInit = () => { //  экспортируем цункцию radioPlayerInit и здесь же ее опсиываем
-    const videoPlayer = document.querySelector('.video-player');
-    const videoButtonPlay = document.querySelector('.video-button__play');
-    const videoButtonStop = document.querySelector('.video-button__stop');
-    const videoTimePassed = document.querySelector('.video-time__passed'); 
-    const videoProgress = document.querySelector('.video-progress');//прогрессбар
-    const videoTimeTotal = document.querySelector('.video-time__total');
-    const videoVolume = document.querySelector('.video-volume');//сладйер увеличения звука
-    const videoFullScreen = document.querySelector('.video-fullscreen');// иконка полного размера окна
+import { addZero } from './supScript.js'; //импортируем функицю  addZero из файла supScript.js
 
-    //console.log(videoFullScreen.dir());
-
+export const  musicPlayerInit = () => { //  экспортируем цункцию radioPlayerInit и здесь же ее описываем
     
+    const  audio = document.querySelector('.audio'); 
+    const  audioImg = document.querySelector('.audio-img'); //каринка на крутящемся круге
+    const  audioHeader = document.querySelector('.audio-header'); 
+    const  audioPlayer = document.querySelector('.audio-player');//<audio src="hello.mp3"> 
+    const  audioNavigation = document.querySelector('.audio-navigation'); 
+    const  audioButtonPlay = document.querySelector('.audio-button__play'); 
+    const  audioProgress = document.querySelector('.audio-progress'); //прогрессбар
+    const  audioProgressTiming = document.querySelector('.audio-progress__timing'); //закрашиваем прогрессбара красной полосой
+    const  audioTimePassed = document.querySelector('.audio-time__passed'); 
+    const  audioTimeTotal = document.querySelector('.audio-time__total'); 
 
-    const toogleIcon = () => {
-        if(videoPlayer.paused){ //если видео не идет
-            videoButtonPlay.classList.remove('fa-pause'); //у кнопки videoButtonPlay удалеям иконку паузы
-            videoButtonPlay.classList.add('fa-play');//у кнопки videoButtonPlay менеям иконку на плей
+    const playList = ['hello', 'flow', 'speed'];//список названий песен
+
+    let trackIndex = 0; //индекс той песни котрая играет
+
+    const loadTrack = () => {//запуск песни
+        const isPlayed = audioPlayer.paused; //если при переключении не играла, вернет true. Иначе false
+    
+        audioPlayer.src = `./audio/${playList[trackIndex]}.mp3`;  
+        audioImg.src = `./audio/${playList[trackIndex]}.jpg`;
+        audioHeader.textContent = playList[trackIndex].toUpperCase();
+
+        if(isPlayed){//
+            audioPlayer.pause();
         }
-        else{//если видео запущено
-            videoButtonPlay.classList.add('fa-pause');
-            videoButtonPlay.classList.remove('fa-play');//
-            
+        else{ //если при переключении  играла
+            audioPlayer.play();
         }
-
-    };
-
-
-    const togglePlay = () => {
-        if(videoPlayer.paused){ //если видео на паузе
-            videoPlayer.play(); // у видеоплеера есть такой метод play()
-        }
-        else{
-          videoPlayer.pause(); //ставим на паузу
-        } 
-
-        //toogleIcon();
-    };
-
-    const stopPlay = () => {
-        videoPlayer.pause(); //ставим на паузу
-        videoPlayer.currentTime = 0; //начальная точка откуда видео начинается, у видео еть свойство currentTime
         
     };
 
-    const addZero = n => n < 10 ? '0' + n : n;  //если n<10  то добавляем вначало 0, иначе возвращаем. Здесь у парамтра n  скобки неставим, тк он один
-    //либо выше строку можно перписать так:
-    // const addZero = n => {
-    //    return n < 10 ? '0' + n : n;
-    // };
-
-    const changeValue = () => { //меням значнеие звука
-        const valueVolum = videoVolume.value;//значнеие звука
-        console.log(videoPlayer.volume);
-        videoPlayer.volume = valueVolum / 100;
-
-    };
+    const prevTrack = () =>{
+        if(trackIndex !== 0 ){
+            trackIndex --;
+        }
+        else{
+            trackIndex = playList.length - 1;
+        }
+        loadTrack();//запуск песни
+    }; 
 
 
-    videoPlayer.addEventListener('click', togglePlay); //при нажатии на видео визывется фукнция  togglePlay
-    videoButtonPlay.addEventListener('click', togglePlay);//при нажатии на кнопку плей в меню, вызыватся функция togglePlay
+    const nextTrack = () =>{
+        if(trackIndex === playList.length - 1){
+            trackIndex = 0;
+        }
+        else{
+            trackIndex++;
+        }
+        loadTrack();//запуск песни
+    }; 
+
+   
+
+    audioNavigation.addEventListener('click', (event) => { //на панель управления вешаем событие
+        const target = event.target;  //хранит элемет на котроый нажали
+        console.log(target);
+
+        if(target.classList.contains('audio-button__play')){  //если у нажатого эелмнета есть класс 'audio-button__play', то есть если нажали на кнопку плей
+            audio.classList.toggle('play');//будет крутиться кружок большой
+            audioButtonPlay.classList.toggle('fa-play');
+            audioButtonPlay.classList.toggle('fa-pause');
+            
+            if(audioPlayer.paused){ //если на паузе
+                audioPlayer.play();  //музыка появится 
+            }
+            else{
+                audioPlayer.pause(); //музыка остановится
+            }
+        }
+
+        if(target.classList.contains('audio-button__prev')){  //если у нажатого эелмнета есть класс 'audio-button__prev', то есть если нажали на кнопку prev
+            prevTrack();
+        }
+
+        if(target.classList.contains('audio-button__next')){  //если у нажатого эелмнета есть класс 'audio-button__next', то есть если нажали на кнопку next
+            nextTrack();
+        }
+    });
+
+    audioPlayer .addEventListener('ended', () => { //когда трек закончился
+        nextTrack(); //запустим трэк слдеюущий
+        audioPlayer.play();//так как  когда трек закончится,  то isPlayed=false 
+    }); 
     
-    //
-    videoPlayer.addEventListener('play', toogleIcon); //у видео есть событие  play, это событие будет происходить когда нажали на видео чтоб запустить 
-    videoPlayer.addEventListener('pause', toogleIcon);//у видео есть событие  pause, это событие будет происходить когда нажали на видео чтоб  остановить
+    
+    audioPlayer.addEventListener('timeupdate', () => { //изменение времени
 
-    videoButtonStop.addEventListener('click', stopPlay); //после клика на кнпоку квадратки videoButtonStop вызываеся функция stopPlay
+        const currentTime = audioPlayer.currentTime; //у аудиоплеера есть свойство currentTime, получили сколкько времени прошло уже
+        const duration =  audioPlayer.duration; //это константа, у аудио етсь свойство duration , длительность аудио
 
-    videoPlayer.addEventListener('timeupdate', () => {
-        const currentTime = videoPlayer.currentTime; //у видеоплеера етсь свойство currentTime, получили сколкько времени прошло уже
-        const duration =  videoPlayer.duration; //это константа, у видеоплеера етсь свойство duration , длительность видео
+        const progress = (currentTime /  duration) * 100; // его значение меняем
 
-        videoProgress.value = (currentTime /  duration) * 100; //у этого элемента есть атрибут value, его значение меняем
+        audioProgressTiming.style.width = progress + '%'; //конкатенация  с процентом, в верстке в барузере будет style="width:...%"
 
-        let minutePassed = Math.floor(currentTime / 60);
-        let secondsPassed = Math.floor(currentTime % 60); //остаток от деления
+
+        let minutePassed = Math.floor(currentTime / 60) || '0'; //если левая часть вернет nan, то выведется 0
+        let secondsPassed = Math.floor(currentTime % 60) || '0'; //остаток от деления
 
         //общее время -константа
-        let minuteTotal = Math.floor(duration / 60);
-        let secondsTotal = Math.floor(duration % 60); //остаток от деления
+        let minuteTotal = Math.floor(duration / 60) || '0';
+        let secondsTotal = Math.floor(duration % 60) || '0'//остаток от деления
 
-        //videoTimePassed.textContent = addZero(minutePassed) + ':' + addZero(secondsPassed); //сколько ушло
+        //audioTimePassed.textContent = addZero(minutePassed) + ':' + addZero(secondsPassed); //сколько ушло
         //можно строку вверху перписать через интерполяцию так: 
-        videoTimePassed.textContent = `${addZero(minutePassed)}:${addZero(secondsPassed)}`;
+        audioTimePassed.textContent = `${addZero(minutePassed)}:${addZero(secondsPassed)}`;
 
-        //videoTimeTotal.textContent = addZero(minuteTotal) + ':' + addZero(secondsTotal);//общее время 
+        //audioTimeTotal.textContent = addZero(minuteTotal) + ':' + addZero(secondsTotal);//общее время 
         //либо через интерполяцию так:
-        videoTimeTotal.textContent = `${addZero(minuteTotal)}:${addZero(secondsTotal)}`;
-
-
-        //console.log(secondsPassed);
-        //console.log(secondsTotal);
-
-    });
-                                  //можно вставить событие input   вместо change
-    videoProgress.addEventListener('input', () => { //обработчик прогрессбара videoProgress, тк  у поля type=range у него есть событие change, оно проиходит когда  передвинули движок
-        const duration = videoPlayer.duration; 
-        const value = videoProgress.value; //получаем значнее на прогрессбаре
-
-        videoPlayer.currentTime = (value * duration) / 100;//получем то время, на котрое мы кликнули по прорессбару
-    });
-
-
-    videoVolume.addEventListener('input', changeValue); // оработчик события на звуке, при смене звука, вызывется фукнция
-    
-    videoFullScreen.addEventListener('click', () => { //на иконку навесиил собыие клика
-        videoPlayer.requestFullscreen();//видео есть втсроенный метод, открыватевидео на весь экран
-    });
-
-
-    videoPlayer.addEventListener('volumechange', () =>{
-        console.log("звук меняется");
-        console.log(videoPlayer.volume * 100);
-        videoVolume.value = Math.round(videoPlayer.volume * 100);//уронеь звука
+        audioTimeTotal.textContent = `${addZero(minuteTotal)}:${addZero(secondsTotal)}`;
     });
     
-    changeValue(); // по умолчанию  устанвоит то значение , котрое стоит в в ерстке в атрибуте value="10"
 
+    audioProgress.addEventListener('click', (event) => {
+        const x = event.offsetX;  //корлината по х, получим то метсо куда кликнули
+        console.log(x);
+        
+        const allWidth = audioProgress.clientWidth; //длина прогрессбара
+        
+        const progress = (x / allWidth) * audioPlayer.duration;;
+        audioPlayer.currentTime = progress;
+    });
+    
+    
+    
     
 
-    //console.dir(videoPlayer);//выводит в ввиде объекта т есть video.video-player
 };
 
 
